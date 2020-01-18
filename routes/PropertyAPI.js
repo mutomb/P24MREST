@@ -60,5 +60,18 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
 	//edit properties under user with _id=req.query
+	User.findById(req.params.id).then(function(user) {
+
+		user.properties.forEach(function(property, index) {
+			if(property._id.equals(req.body._id)) {
+				user.properties.splice(index, 1);
+			}
+		});
+		user.markModified('properties');
+		user.save().then(function(user) {
+			res.send(user);
+		})
+	}).catch(next);
 });
+
 module.exports = router;
