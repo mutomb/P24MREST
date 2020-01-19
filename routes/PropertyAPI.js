@@ -8,6 +8,39 @@ const Property = require('../models/Property');
 const Image = require('../models/Image');
 const ImageHandler = require('./controllers/ImageHandler');
 
+// upload an image and get its path for db
+router.post('/images', function(req, res, next){
+	console.log('pass')
+	ImageHandler(req, res, function(err) {
+		if(err) {
+			next(err);
+		} else {
+			let path = `/api/property/images/${req.file.filename}`;
+			res.send({path: path});
+		}
+	})
+});
+// retrieve an image
+router.get('/images/:filename', function(req, res, next) {
+	let imagename = req.params.filename;
+	let path = __dirname +'/../public/images/'+imagename;
+	let image = fs.readFileSync(path);
+	let mime = fileType.fromBuffer(image);
+		console.log(mime)
+	res.writeHead(200, {'Content-type': mime});
+	res.end(image);
+})
+// delete an image 
+router.delete('/images/:filename', function(req, res, next) {
+	let imagename = req.params.filename;
+	let path = __dirname +'/../public/images/'+imagename;
+	let image = fs.unlink(path, function(err){
+		if(err) next(err);
+		else {
+			res.sendStatus(200);
+		}	
+	});
+});
 
 //Retrieve all properties API
 router.get('/', function(req, res, next) {
@@ -78,35 +111,6 @@ router.delete('/:id', function(req, res, next) {
 	}).catch(next);
 });
 
-router.post('/images', function(req, res, next){
-	ImageHandler(req, res, function(err) {
-		if(err) {
-			next(err);
-		} else {
-			let path = `/api/property/images/${req.file.filename}`;
-			res.send({path: path});
-		}
-	})
-});
-router.get('/images/:filename', function(req, res, next) {
-	let imagename = req.params.filename;
-	let path = __dirname +'/../public/images/'+imagename;
-	let image = fs.readFileSync(path);
-	let mime = fileType.fromBuffer(image);
-		console.log(mime)
-	res.writeHead(200, {'Content-type': mime});
-	res.end(image);
-})
-router.delete('/images/:filename', function(req, res, next) {
-	let imagename = req.params.filename;
-	let path = __dirname +'/../public/images/'+imagename;
-	let image = fs.unlink(path, function(err){
-		if(err) next(err);
-		else {
-			res.sendStatus(200);
-		}	
-	});
-});
 
 router.post('/image')
 

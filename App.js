@@ -5,9 +5,8 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-//const locol_uri = 'mongodb://localhost:27017/property24';
-const remote_uri = 'mongodb+srv://temp:temp@cluster0-j1vkj.mongodb.net/test?retryWrites=true&w=majority'
-var db = mongoose.connect( remote_uri, {
+const local_uri = 'mongodb://localhost:27017/property24';
+var db = mongoose.connect( local_uri , {
 	useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify:false
 }, function(err) {
 	if(err) throw err;
